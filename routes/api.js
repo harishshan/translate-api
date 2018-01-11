@@ -4,7 +4,8 @@ const googleTranslate = require('free-google-translation');
 
 const router = express.Router();
 
-//list the translated text
+//Return the translated text
+//URL structure: http://localhost:4000?sourceLanguage=en&targetLanguage=ne&text=I Love You
 router.get('/', function(request, response, next) {
 
     translate(request.query.text, {from: request.query.sourceLanguage, to: request.query.targetLanguage}).then(res => {
