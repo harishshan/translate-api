@@ -8,39 +8,32 @@ const router = express.Router();
 //URL structure: http://localhost:4000?sourceLanguage=en&targetLanguage=ne&text=I Love You
 router.get('/', function(request, response, next) {
 
-    translate(request.query.text, {from: request.query.sourceLanguage, to: request.query.targetLanguage}).then(res => {
-        console.log(res.text);
-        //=> I love nepal
-        console.log(res.from.language.iso);       
-
-        response.send({
-            translateText: res.text
+    if (typeof request.query.sourceLanguage !== 'undefined' && request.query.sourceLanguage !== null &&
+        typeof request.query.targetLanguage !== 'undefined' && request.query.targetLanguage !== null &&
+        typeof request.query.text !== 'undefined' && request.query.text !== null
+    ) {
+        translate(request.query.text, {from: request.query.sourceLanguage, to: request.query.targetLanguage}).then(res => {
+            console.log(res.text);
+            //=> I love nepal
+            console.log(res.from.language.iso);       
+    
+            response.status(200);
+            response.send({
+                translateText: res.text
+            });
+        }).catch(err => {
+            console.error(err);
+            response.status(404);
+            response.send({
+                translateText: 'The request couldn\'t be translated'
+            });
         });
-    }).catch(err => {
-        console.error(err);
-    });
-
-    // googleTranslate(request.query.text, request.query.sourceLanguage, request.query.targetLanguage)
-    // .then(function(response) {
-    //     console.log('Translation Text is : ', response);
-    // })
-    // .catch(function(error) {
-    //     console.error("Failed!", error);
-    //     activateSubmitToTranslateLabel();
-    //     ajaxLogToFile(sourceText, sourceLanguage, targetLanguage, error);        
-    // });
-});
-
-//post is for adding
-router.post('/', function(request, response, next) {
-    // console.log(request.body);
-    response.send({
-        type: 'POST'
-
-        // sourceLanguage: request.body.sourceLanguage,
-        // targetLanguage: request.body.targetLanguage,
-        // text: text
-    });
+    } else {
+        response.status(400);
+        response.send({
+            translateText: 'Invalid Request!'
+        });
+    }
 });
 
 module.exports = router;
