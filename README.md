@@ -3,12 +3,12 @@ Translation API
 
 Receive a Get Request with Text, Source Language and Target Language. Then, make a FREE Translation request to google to translate text into target language. The translation text is then returned as a response.
 
-##Installation
+## Installation
 1. Clone the Repo
 2. npm install
 3. npm start: This start nodemon wich monitors any change to the file on localhost:4000
 
-##Requesting on local:
+## Requesting on local:
 `http://localhost:4000/?sourceLanguage=en&targetLanguage=ne&text=I%20Love%20You`
 
 Response:
@@ -16,7 +16,7 @@ Response:
   "translateText": "म तिमीलाई माया गर्छु"
 }`
 
-##Live request:
+## Live request:
 'http://translateapi.howtofixthis.com/?sourceLanguage=en&targetLanguage=ta&text=Tranlsation%20is%20the%20best'
 
 Response:
@@ -24,8 +24,9 @@ Response:
   "translateText": "म तिमीलाई माया गर्छु"
 }`
 
-##Consuming on Client end
-`let freeTranslateThirdParty = function(sourceText, sourceLanguage, targetLanguage) {
+## Consuming on Client end
+`
+let freeTranslateThirdParty = function(sourceText, sourceLanguage, targetLanguage) {
     return new Promise(function(resolve, reject) {
         let encodedUrl = encodeURI('http://translateapi.howtofixthis.com/?sourceLanguage=' + sourceLanguage + '&targetLanguage=' + targetLanguage + '&text=' + sourceText);
 
