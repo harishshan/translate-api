@@ -7,6 +7,13 @@ const app = express();
 // use body-parser middleware
 // app.use(bodyParser.json());
 
+//Enable Cross Origin Resource Sharing.
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // initialize routes
 app.use('/', require('./routes/api'));
 
