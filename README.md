@@ -26,6 +26,7 @@ Response:
 
 ## Consuming on Client end
 `
+
 let freeTranslateThirdParty = function(sourceText, sourceLanguage, targetLanguage) {
     return new Promise(function(resolve, reject) {
         let encodedUrl = encodeURI('http://translateapi.howtofixthis.com/?sourceLanguage=' + sourceLanguage + '&targetLanguage=' + targetLanguage + '&text=' + sourceText);
@@ -63,5 +64,6 @@ freeTranslateThirdParty(sourceText, sourceLanguage, targetLanguage)
 .catch(function(error) { //For any other
     console.error('Failed -', error);     
 });
+
 
 `
