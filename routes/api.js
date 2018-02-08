@@ -51,6 +51,61 @@ function ddmmyyyy(dateIn) {
    return String(dd + '-' + mm + '-' + yyyy);
 }
 
+function getDateTime() {
+    return new Date().toLocaleString()
+}
+
+
+//TODO: move to string class
+function empty(str) {
+    if (typeof str == 'undefined' || !str || str.length === 0 || str === "" || !/[^\s]/.test(str) || /^\s*$/.test(str) || str.replace(/\s/g,"") === "")
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+//Todo: Move to request IP Class
+function getRequestIP(request) {    
+    if (request.headers['x-forwarded-for']) {
+        return request.headers['x-forwarded-for'].split(",").pop();
+    } else if (request.connection && request.connection.remoteAddress) {
+        return request.connection.remoteAddress;
+    } else {
+        return request.ip;
+    }
+}
+
+function getRequestRefererOriginOrHost(request) {
+    if (typeof request.headers.origin != "undefined") {
+        return request.headers.origin;
+    }
+
+    return request.headers.host;
+}
+
+
+// TODO: Move to domain directory class
+function getDomainDirectory(domainUrl) {
+    return domainUrl.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
+}
+
+function getDomainPage(request) {    
+    if (typeof request.headers.referer != "undefined") {
+        let referer = request.headers.referer;
+        let page = referer.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[1];
+
+        if (!empty(page)) {
+            return page;
+        }
+    }
+
+    return 'indexPage';
+}
 
 //Return the translated text
 //URL structure: http://localhost:4000?sourceLanguage=en&targetLanguage=ne&text=I Love You
@@ -75,17 +130,23 @@ router.get('/', function(request, response, next) {
             // Logging Process
                 // TODO: 
                    // Move to separate file
-                   // Add Remote Host IP
 
-            logTranslation = 'Source Language: ' + request.query.sourceLanguage + '\n' +
-                                 'Target Language:' + request.query.targetLanguage + '\n' +
-                                 'Source Text: ' + request.query.text + '\n' +
-                                 'Translated Text: ' + res.text + '\n\n\n';
+            logTranslation = 'Requested On: ' + getDateTime() + '\n' +
+                             'Request From: ' + getRequestIP(request) + '\n' +
+                             'Source Language: ' + request.query.sourceLanguage + '\n' +
+                             'Target Language:' + request.query.targetLanguage + '\n' +
+                             'Source Text: ' + request.query.text + '\n' +
+                             'Translated Text: ' + res.text + '\n\n\n';
 
             console.log('Host Name', request.headers.host);
+            console.log('Request IP', getRequestIP(request));
+            console.log('Referer Name', request.headers.referer);
             console.log(logTranslation);
 
-            let translationDirectory = 'logs/googleTranslate/' + request.headers.host + '/';
+            let translationDirectory = 'logs/googleTranslate/' + 
+                                        getDomainDirectory(getRequestRefererOriginOrHost(request)) + '/' +
+                                        getDomainPage(request) + '/';
+
             mkDirByPathSync(translationDirectory);
             
             let today = new Date();
