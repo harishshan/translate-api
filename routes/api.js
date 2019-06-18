@@ -117,26 +117,29 @@ router.get('/', function(request, response, next) {
     ) {
         let logTranslation;
 
-        translate(request.query.text, {from: request.query.sourceLanguage, to: request.query.targetLanguage}).then(res => {
-            console.log(res.text);
-            //=> I love nepal
-            console.log(res.from.language.iso);       
-    
+    // googleTranslate(request.query.text, request.query.sourceLanguage, request.query.targetLanguage)
+    // .then(function(response) {
+    //     console.log('*** Free, google translate', response);
+    // });
+
+
+        console.log('*** call google translate ***');
+
+        googleTranslate(request.query.text, request.query.sourceLanguage, request.query.targetLanguage)
+        .then(res => {
+            console.log('**** Translation is  ', res);
+
             response.status(200);
             response.send({
-                translateText: res.text
+                translateText: res
             });
-
-            // Logging Process
-                // TODO: 
-                   // Move to separate file
 
             logTranslation = 'Requested On: ' + getDateTime() + '\n' +
                              'Request From: ' + getRequestIP(request) + '\n' +
                              'Source Language: ' + request.query.sourceLanguage + '\n' +
                              'Target Language:' + request.query.targetLanguage + '\n' +
                              'Source Text: ' + request.query.text + '\n' +
-                             'Translated Text: ' + res.text + '\n\n\n';
+                             'Translated Text: ' + res + '\n\n\n';
 
             console.log('Host Name', request.headers.host);
             console.log('Request IP', getRequestIP(request));
@@ -161,15 +164,69 @@ router.get('/', function(request, response, next) {
                 // success case, the file was saved
                 console.log('Logged to a file!');
             });
-        }).catch(err => {
-            console.error(err);
+        })
+        .catch(error => {
+            console.error(error);
             response.status(404);
             response.send({
                 translateText: 'The request couldn\'t be translated'
-            });
-
-            //@TODO Log here
+            });     
         });
+
+        // translate(request.query.text, {from: request.query.sourceLanguage, to: request.query.targetLanguage}).then(res => {
+        //     console.log(res);
+        //     console.log(res.text);
+        //     //=> I love nepal
+        //     console.log(res.from.language.iso);       
+    
+        //     response.status(200);
+        //     response.send({
+        //         translateText: res.text
+        //     });
+
+        //     // Logging Process
+        //         // TODO: 
+        //            // Move to separate file
+
+        //     logTranslation = 'Requested On: ' + getDateTime() + '\n' +
+        //                      'Request From: ' + getRequestIP(request) + '\n' +
+        //                      'Source Language: ' + request.query.sourceLanguage + '\n' +
+        //                      'Target Language:' + request.query.targetLanguage + '\n' +
+        //                      'Source Text: ' + request.query.text + '\n' +
+        //                      'Translated Text: ' + res.text + '\n\n\n';
+
+        //     console.log('Host Name', request.headers.host);
+        //     console.log('Request IP', getRequestIP(request));
+        //     console.log('Referer Name', request.headers.referer);
+        //     console.log(logTranslation);
+
+        //     let translationDirectory = 'logs/googleTranslate/' + 
+        //                                 getDomainDirectory(getRequestRefererOriginOrHost(request)) + '/' +
+        //                                 getDomainPage(request) + '/';
+
+        //     mkDirByPathSync(translationDirectory);
+            
+        //     let today = new Date();
+        //     let formattedDate = ddmmyyyy(today);
+        //     let translationFile = formattedDate + '.txt';
+
+        //     // #writeFile #appendFile
+        //     fs.appendFile(translationDirectory + translationFile, logTranslation, (err) => {  
+        //         // throws an error, you could also catch it here
+        //         if (err) throw err;
+
+        //         // success case, the file was saved
+        //         console.log('Logged to a file!');
+        //     });
+        // }).catch(err => {
+        //     console.error(err);
+        //     response.status(404);
+        //     response.send({
+        //         translateText: 'The request couldn\'t be translated'
+        //     });
+
+        //     //@TODO Log here
+        // });
     } else {
         response.status(400);
         response.send({
